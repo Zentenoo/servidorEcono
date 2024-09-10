@@ -25,7 +25,7 @@ app.get('/compraBob', async (req, res) => {
     try {
         await startBrowser();
         const page = await browser.newPage();
-        await page.goto('https://p2p.binance.com/trade/all-payments/USDT?fiat=BOB');
+        await page.goto('https://p2p.binance.com/trade/all-payments/USDT?fiat=BOB', { waitUntil: 'load' });
         await page.waitForSelector('.headline5.mr-4xs.text-primaryText', { state: 'visible' });
         const products = await page.$$eval(
             '.headline5.mr-4xs.text-primaryText', 
@@ -46,7 +46,7 @@ app.get('/ventaArs', async (req, res) => {
     try {
         await startBrowser();
         const page = await browser.newPage();
-        await page.goto('https://p2p.binance.com/trade/sell/USDT?fiat=ARS&payment=all-payments');
+        await page.goto('https://p2p.binance.com/trade/sell/USDT?fiat=ARS&payment=all-payments', { waitUntil: 'load' });
         await page.waitForSelector('.headline5.mr-4xs.text-primaryText', { state: 'visible' });
         const products = await page.$$eval(
             '.headline5.mr-4xs.text-primaryText', 
