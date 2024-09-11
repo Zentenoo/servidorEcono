@@ -1,68 +1,20 @@
 const express = require('express');
+const axios = require('axios');
 const cors = require('cors');
-const bodyParser = require('body-parser');
-const { webkit } = require('playwright'); // Ajuste de importación
-
 const app = express();
+
+app.use(express.json());
 app.use(cors());
-const port = process.env.PORT || 3000;
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-
-let browser; 
-async function startBrowser() {
-    if (!browser) {
-        browser = await webkit.launch({ headless: true });
-    }
-}
-
-app.get('/', (req, res) => {
-    res.send('Hola Cejon!');
+app.post('/api/binance', async (req, res) => {
+  try {
+    const { data } = await axios.post('https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search', req.body);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
 });
 
-app.get('/compraBob', async (req, res) => {
-    try {
-        await startBrowser();
-        const page = await browser.newPage();
-        await page.goto('https://p2p.binance.com/trade/all-payments/USDT?fiat=BOB', { waitUntil: 'load' });
-        await page.waitForSelector('.headline5.mr-4xs.text-primaryText', { state: 'visible' });
-        const products = await page.$$eval(
-            '.headline5.mr-4xs.text-primaryText', 
-            (results) => results.map((el) => {
-                const precio = el.innerText;
-                return { precio };
-            })
-        );
-        await page.close();
-        res.json(products); 
-    } catch (error) {
-        console.error('Error al hacer scraping:', error);
-        res.status(500).send('Error al hacer scraping');
-    }
-});
-
-app.get('/ventaArs', async (req, res) => {
-    try {
-        await startBrowser();
-        const page = await browser.newPage();
-        await page.goto('https://p2p.binance.com/trade/sell/USDT?fiat=ARS&payment=all-payments', { waitUntil: 'load' });
-        await page.waitForSelector('.headline5.mr-4xs.text-primaryText', { state: 'visible' });
-        const products = await page.$$eval(
-            '.headline5.mr-4xs.text-primaryText', 
-            (results) => results.map((el) => {
-                const precio = el.innerText;
-                return { precio };
-            })
-        );
-        await page.close();
-        res.json(products); 
-    } catch (error) {
-        console.error('Error al hacer scraping:', error);
-        res.status(500).send('Error al hacer scraping');
-    }
-});
-
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+app.listen(3000, () => {
+  console.log('Servidor corriendo en el puerto 3000');
 });
