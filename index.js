@@ -1,10 +1,10 @@
 const express = require('express');
 const axios = require('axios');
-const cors = require('cors');
 const app = express();
 
+const port = process.env.PORT || 3000;
+
 app.use(express.json());
-app.use(cors());
 
 app.post('/api/binance', async (req, res) => {
   try {
@@ -15,6 +15,6 @@ app.post('/api/binance', async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log('Servidor corriendo en el puerto 3000');
+app.listen(port, () => {
+  console.log('Servidor corriendo en el puerto',port);
 });
