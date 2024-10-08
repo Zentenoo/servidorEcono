@@ -10,7 +10,16 @@ app.use(cors());
 
 app.post('/api/binance', async (req, res) => {
   try {
-    const { data } = await axios.post('https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search', req.body);
+    const { data } = await axios.post(
+      'https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search',
+      req.body,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Cookie': `${process.env.COOKIE}`
+        }
+      }
+    );
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Error en el servidor' });
